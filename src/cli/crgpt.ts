@@ -1,55 +1,53 @@
 #!/usr/bin/env node
 
-import { Command, Argument } from 'commander';
-import { runCRGPT, runCRGPTCLI } from '../lib';
-import { readConfig } from './config';
-import { initCRGPT } from './init';
-import { CrGPTCLIOptions } from './types';
+import { Command, Argument } from "commander";
+import { runCRGPT, runCRGPTCLI } from "../lib";
+import { readConfig } from "./config";
+import { initCRGPT } from "./init";
+import { CrGPTCLIOptions } from "./types";
 
 const program = new Command();
 
 program
-  .command('crgpt')
+  .description("Run CRGPT on a pull request")
   .addArgument(
-    new Argument('<action>', 'Action to perform')
-      .choices(['init', 'review', 'diff', 'desc'])
-      .default('review', 'Code review')
+    new Argument("<action>", "Action to perform")
+      .choices(["init", "review", "diff", "desc"])
+      .default("review", "Code review")
   )
-  .option('-o, --output <output>', 'output method')
-  .option('-s, --source <source>', 'Source branch name')
-  .option('-t, --target <target>', 'Target branch name')
-  .option('-p, --prId [prId]', 'Pull request ID')
-  .option('-at, --ai-token [accessToken]', 'Openai Access token')
-  .option('-gt, --github-token [accessToken]', 'Github Access token')
-  .option('-bt, --bitbucket-token [accessToken]', 'Bitbucket Access token')
-  .option('-c, --config [config]', 'Config file path', '.crgpt.yml')
-  .description('Run CRGPT on a pull request')
-  .action(async (options: CrGPTCLIOptions) => {
+  .option("-o, --output <output>", "output method")
+  .option("-s, --source <source>", "Source branch name")
+  .option("-t, --target <target>", "Target branch name")
+  .option("-p, --prId [prId]", "Pull request ID")
+  .option("-at, --ai-token [accessToken]", "Openai Access token")
+  .option("-gt, --github-token [accessToken]", "Github Access token")
+  .option("-bt, --bitbucket-token [accessToken]", "Bitbucket Access token")
+  .option("-c, --config [config]", "Config file path", ".crgpt.yml")
+  .action(async (action: string, options: CrGPTCLIOptions) => {
     try {
       const {
-        action,
+        prId,
         source: sourceBranch,
         target: targetBranch,
-        prId,
         config: configPath,
       } = options;
-
+      
       const config = await readConfig(configPath);
 
       switch (action) {
-        case 'init':
+        case "init":
           await initCRGPT(configPath, options);
-        case 'review':
+        case "review":
           if (!sourceBranch || !targetBranch) {
-            throw new Error('Please provide source and target branch names');
+            throw new Error("Please provide source and target branch names");
           }
           await runCRGPT({ sourceBranch, targetBranch, prId }, config);
-        case 'diff':
-          throw new Error('Not implemented');
-        case 'desc':
-          throw new Error('Not implemented');
+        case "diff":
+          throw new Error("Not implemented");
+        case "desc":
+          throw new Error("Not implemented");
         default:
-          throw new Error('Invalid action');
+          throw new Error("Invalid action");
       }
     } catch (error) {
       console.error(error);
