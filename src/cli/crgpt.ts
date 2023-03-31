@@ -19,6 +19,8 @@ program
   .option("-s, --source <source>", "Source branch name")
   .option("-t, --target <target>", "Target branch name")
   .option("-p, --prId [prId]", "Pull request ID")
+  .option("-ps, --project-slug [projectSlug]", "Bitbucket project slug")
+  .option("-rs, --repo-slug [repoSlug]", "Bitbucket repo slug")
   .option("-at, --ai-token [accessToken]", "Openai Access token")
   .option("-gt, --github-token [accessToken]", "Github Access token")
   .option("-bt, --bitbucket-token [accessToken]", "Bitbucket Access token")
