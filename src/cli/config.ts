@@ -82,6 +82,10 @@ export async function prepareConfig(
     config = await readConfig(configFile);
   }
 
+  if(options.output) {
+    config.output = options.output;
+  }
+
   if (options.aiToken) {
     config.openai.apiKey = options.aiToken;
   }
