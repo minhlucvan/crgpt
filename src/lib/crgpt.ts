@@ -128,7 +128,7 @@ async function summarizeCRContent(
 ): Promise<ReviewSumary> {
   const header = '# Code Review Summary:';
   const fileSummaries = results
-    .map(({ file, review }) => `---+----<br /> ### ${file}\n  \n${review}`)
+    .map(({ file, review }) => `\n\n  ### ${file}\n  \n${review}`)
     .join('\n\n');
   const content = `${header}\n\n${fileSummaries}`;
 
