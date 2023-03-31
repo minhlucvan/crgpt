@@ -36,7 +36,14 @@ And options are the command-line arguments:
 For example, to perform a code review on a pull request with ID 123, you can use the following command:
 
 ```bash
-crgpt review -s sourceBranch -t targetBranch -p 123 -at openaiToken -gt githubToken -bt bitbucketToken
+crgpt -s sourceBranch -t targetBranch -p 123 -at openaiToken -bt bitbucketToken review
+
+```
+
+To perform a code review the changes between 2 branches and print to console:
+
+```bash
+crgpt review -s sourceBranch -t targetBranch -at openaiToken review
 
 ```
 
