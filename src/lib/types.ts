@@ -1,4 +1,5 @@
 export type Config = {
+    output: 'console';
     bitbucket?: {
       repoSlug: string;
       accessToken: string;

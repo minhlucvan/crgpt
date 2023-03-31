@@ -69,7 +69,8 @@ async function postDiffToEndpoint(
   const apiKey = config.openai.apiKey;
   const promptTml = config.review.prompt;
   const checklist = config.review.checklist;
-  const prompt = promptTml.replace('{checklist}', checklist);
+  const summary = config.review.summary
+  const prompt = promptTml.replace('{checklist}', checklist).replace('{output}', summary);
 
   const response = await fetch(endpointUrl, {
     method: 'POST',

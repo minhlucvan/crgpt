@@ -2,15 +2,23 @@
   "name": "crgpt",
   "version": "1.0.0",
   "description": "CLI tool that leverages ChatGPT API to perform code reviews and providing suggestions for improving code quality.",
-  "keywords": ["code-review", "code-quality", "chatgpt", "chatbot", "code-review-bot", "code-quality-bot"],
+  "keywords": [
+    "code-review",
+    "code-quality",
+    "chatgpt",
+    "chatbot",
+    "code-review-bot",
+    "code-quality-bot"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "crgpt": "crgpt",
+    "crgpt": "node ./dist/cli/crgpt.js",
+    "build:clean": "tsc --build --clean",
     "build": "tsc"
-  },  
+  },
   "bin": {
-    "crgpt": "dist/cli.js"
+    "crgpt": "dist/cli/crgpt.js"
   },
   "repository": {
     "type": "git",
@@ -28,8 +36,9 @@
     "typescript": "^5.0.2"
   },
   "dependencies": {
+    "@types/node-fetch": "2",
     "commander": "^10.0.0",
     "js-yaml": "^4.1.0",
-    "node-fetch": "^3.3.1"
+    "node-fetch": "2"
   }
 }

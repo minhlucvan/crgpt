@@ -15,6 +15,7 @@ program
       .choices(['init', 'review', 'diff', 'desc'])
       .default('review', 'Code review')
   )
+  .option('-o, --output <output>', 'output method')
   .option('-s, --source <source>', 'Source branch name')
   .option('-t, --target <target>', 'Target branch name')
   .option('-p, --prId [prId]', 'Pull request ID')

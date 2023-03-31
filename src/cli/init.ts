@@ -5,6 +5,7 @@ import { CrGPTCLIOptions } from './types';
 
 export async function initCRGPT(configPath: string, options: CrGPTCLIOptions): Promise<void> {
   const defaultConfig: Config = {
+    output: 'console',
     openai: {
       endpoint: 'https://api.openai.com/v1/engines/davinci-codex/completions',
       apiKey: options.aiToken || '',

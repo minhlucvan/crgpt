@@ -1,3 +1,52 @@
+output: 'console'
 openai:
+  endpoint: "https://api.openai.com/v1/chat/completions"
+  apiKey: "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"
 bitbucket:
-code:
+  apiBaseUrl: "https://api.bitbucket.org/2.0/repositories"
+  owner: "busker-media"
+  projectKey: "BUS"
+  apiKey: "ATATT3xFfGF0D5CT_V-f5syiMzYP4Wqpe1fjcYohmNnuUme3Kf2CKpB555uRCqBbnJYT2ntpnNpu5_eK5anqdUimEGL4_VoDL1RG7JmtHQO4SCzTaPuQQ-YsAMFu3ki_e_PJ2VVd8yIxjeOPqIOdhcWZE2BQrmdyObrwT5hTofnuIVW_YeWh1t0=030F1CE0"
+  accessToken: "ATCTT3xFfGN0oxLuIA7sR3WQ5EJoR4IzhZdBS0fJU_Ngp4uek3r9UoDc9KjJ38RPFKHlbHLjPRFwCIPYjtOcXtLKl4EV3CapwQQ50zO8l3FkKa9sYVJA1GUQrxQrMXFiViYRI0gfk0O2HvXvHctWfAZRcE3QwNqtrB686wFitgRotrmeAi7goME=325FBD69"
+  repoSlug: "busker-server"
+  # username: "minhlvqs"
+  username: "ccode-review"
+  password: "ATBBnxahHvckTy76rNF4JxjBSueNE5057365"
+codeReview:
+  prompt: |
+    Your task is to act as a code reviewer and review a pull request by summarizing the changes made, identifying potential issues related to logic and runtime, and creating a bullet list of action items needed before the change can be approved. The output should focus on items mentioned in the given code review checklist.
+    Instructions:
+    - Review the output of git diff for the pull request
+    - Summarize the overview of the changes made
+    - Identify potential issues related to logic and runtime
+    - Output as a markdown document, with the following sections:
+        {output}
+    - If there are no issues, output "None"
+    - If there are no action items, output "None"
+    - Create a bullet list of action items needed before the change can be approved
+    - The response sentences are no longer than 16 words each
+    - Keep the response sentences as short as possible
+    - Focus on items mentioned in the given code review checklist:
+        {checklist}
+  output: |
+      #### Overview of changes:
+        - Summarize the overview of the changes made
+      #### issues:
+        - Identify potential issues related to logic and runtime
+        - Identify issues mentioned in the code review checklist
+      #### Action items:
+        - Action items needed before the change can be approved
+  checklist: |
+      Code Structure
+        - Is the codebase organized according to NestJS' recommended project structure?
+        - Are there any unnecessary files, folders, or code modules?
+        - Does the code follow the Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY) principle?
+      Error Handling
+        - Are all error scenarios covered in the code?
+        - Are the error messages clear and helpful?
+        - Is the code handling errors gracefully?
+      Security
+        - Are sensitive data and credentials stored securely?
+        - Are all external libraries and packages up-to-date?
+        - Is the code protected against common security vulnerabilities such as SQL injection and cross-site scripting (XSS)?
+

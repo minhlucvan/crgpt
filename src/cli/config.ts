@@ -5,7 +5,13 @@ import { Config } from '../lib/types';
 export async function readConfig(configFile: string): Promise<Config> {
     try {
       const fileContents = await fs.readFile(configFile, 'utf8');
-      return yaml.load(fileContents) as Config;
+      const config = yaml.load(fileContents) as Config;
+
+      if (!config) {
+        throw new Error('Config file is empty');
+      }
+
+      return config;
     } catch (error) {
       throw new Error(`Error reading config file`);
     }
