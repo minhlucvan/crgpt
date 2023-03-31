@@ -43,7 +43,7 @@ crgpt -s sourceBranch -t targetBranch -p 123 -at openaiToken -bt bitbucketToken 
 To perform a code review the changes between 2 branches and print to console:
 
 ```bash
-crgpt review -s sourceBranch -t targetBranch -at openaiToken review
+crgpt -s sourceBranch -t targetBranch -at openaiToken review
 
 ```
 
