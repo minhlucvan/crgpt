@@ -1,4 +1,4 @@
-# CRGPT - CODE REVIEW :heart: GPT
+# CRGPT - CODE REVIEW :heart: CHATGPT
 
 CRGPT is a command-line interface tool that uses ChatGPT API to analyze the git diff and provide insights about the pull request, find potential issues, summarize the changes, and create customizable prompts, code review checklists, and comments into GitHub, Bitbucket, or a markdown file.
 
@@ -29,7 +29,7 @@ And options are the command-line arguments:
 - `-t, --target <target>`: the name of the target branch
 - `-p, --prId [prId]`: the ID of the pull request
 - `-at, --ai-token [accessToken]`: the OpenAI access token
-- `-g`, --github-token [accessToken]`: the GitHub access token
+- `-gt, --github-token [accessToken]`: the GitHub access token
 - `-bt, --bitbucket-token [accessToken]`: the Bitbucket access token
 - `-c, --config [config]`: the path of the configuration file (default is .crgpt.yml)
 
