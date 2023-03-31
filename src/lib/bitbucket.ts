@@ -9,10 +9,12 @@ export async function postCommentToBitbucketPR(
     if (!bitbucketConfig) {
       throw new Error(`Bitbucket configuration is not provided`);
     }
+
+    console.log(`Posting comment to Bitbucket PR: ${prId}`);
   
     const { repoSlug, accessToken, owner } = bitbucketConfig;
     const apiUrl = `https://api.bitbucket.org/2.0/repositories/${owner}/${repoSlug}/pullrequests/${prId}/comments`;
-    const commentContent = result.reviews.map((result) => `#### ${result}).join('\n\n'`);
+    const commentContent = result.content;
     const bodyData = {
       content: {
         raw: commentContent,
@@ -30,10 +32,13 @@ export async function postCommentToBitbucketPR(
     });
   
     if (!response.ok) {
+      console.error(`Error posting comment to Bitbucket PR: ${response.statusText}`);
       throw new Error(
         `Error posting comment to Bitbucket PR: ${response.statusText}`
       );
     }
+
+    console.log(`Comment posted to Bitbucket PR: ${response.statusText}`);
   
     return await response.json();
   }

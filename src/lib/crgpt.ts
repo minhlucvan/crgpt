@@ -14,9 +14,11 @@ import { printCodeReviewToConsole } from './stdout';
 
 async function generateDiffs(
   sourceBranch: string,
-  targetBranch: string
+  targetBranch: string,
+  config: Config,
 ): Promise<Diff[]> {
   const command = `git diff ${sourceBranch}..${targetBranch} --name-only`;
+  const ignoreFiles = config.review.ignoreFiles || [];
 
   return new Promise((resolve, reject) => {
     exec(command, async (error, stdout, stderr) => {
@@ -32,8 +34,8 @@ async function generateDiffs(
 
       const files = stdout.trim().split('\n');
       const diffs = await Promise.all(
-        files.map(async (file) => {
-          const diffCommand = `git diff ${sourceBranch}..${targetBranch} "${file}"`;
+        files.filter(file => !ignoreFiles.includes(file)).map(async (file) => {
+          const diffCommand = `git diff ${sourceBranch}..${targetBranch} -- "${file}"`;
           const diff = await execAsync(diffCommand);
           return { file, diff };
         })
@@ -65,17 +67,22 @@ async function postDiffToEndpoint(
   diffData: string,
   config: Config
 ): Promise<string> {
+  if(!config.openai) { 
+    throw new Error('Error: OpenAI config not found');
+  }
+
   const endpointUrl = config.openai.endpoint;
   const apiKey = config.openai.apiKey;
   const promptTml = config.review.prompt;
   const checklist = config.review.checklist;
-  const prompt = promptTml.replace('{checklist}', checklist);
-
+  const summary = config.review.summary
+  const prompt = promptTml.replace('{checklist}', checklist).replace('{output}', summary);
+  
   const response = await fetch(endpointUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
+      'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
       model: 'gpt-3.5-turbo-0301',
@@ -108,8 +115,8 @@ async function processDiffs(
 ): Promise<FileReviewResult[]> {
   return Promise.all(
     diffData.map(async ({ file, diff }) => {
+      console.log(`Processing file: ${file}`);
       const result = (await postDiffToEndpoint(diff, config)) as string;
-      console.log(`${file}:\n ${result}`);
       return { file, review: result };
     })
   );
@@ -119,9 +126,9 @@ async function summarizeCRContent(
   results: FileReviewResult[],
   config: Config
 ): Promise<ReviewSumary> {
-  const header = 'Code Review Summary:';
+  const header = '# Code Review Summary:';
   const fileSummaries = results
-    .map(({ file, review }) => `### ${file}\n${review}`)
+    .map(({ file, review }) => `---+----<br /> ### ${file}\n  \n${review}`)
     .join('\n\n');
   const content = `${header}\n\n${fileSummaries}`;
 
@@ -138,14 +145,16 @@ export async function runCRGPT(
   config: Config
 ): Promise<ReviewSumary> {
   const { sourceBranch, targetBranch, prId } = options;
-
+  console.log(`run CRGPT`)
+  console.log(`sourceBranch: ${sourceBranch}`);
+  console.log(`targetBranch: ${targetBranch}`);
   if (!sourceBranch || !targetBranch) {
     throw new Error(
       'Error: Please provide sourceBranch, targetBranch as command line arguments.'
     );
   }
 
-  const diffData = await generateDiffs(sourceBranch, targetBranch);
+  const diffData = await generateDiffs(sourceBranch, targetBranch, config);
   const results = await processDiffs(diffData, config, prId);
   const commentContent = await summarizeCRContent(results, config);
   return commentContent;
@@ -157,12 +166,12 @@ export async function runCRGPTCLI(
 ): Promise<void> {
   const { prId } = options;
   const commentContent = await runCRGPT(options, config);
-  
-  if (config.bitbucket && prId) {
+
+  if (config.output =='bitbucket' && config.bitbucket && prId) {
     await postCommentToBitbucketPR(commentContent, config.bitbucket, prId);
-  } else if (config.github && prId) {
+  } else if (config.output =='github' && config.github && prId) {
     await postCommentToGithubPR(commentContent, config.github, prId);
-  } else if (config.file) {
+  } else if (config.output =='file' && config.file) {
     await writeCodeReviewToFile(commentContent, config.file);
   } else {
     printCodeReviewToConsole(commentContent);

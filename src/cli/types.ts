@@ -1,5 +1,4 @@
 export interface CrGPTCLIOptions {
-    action: 'init' | 'review' | 'diff' | 'desc',
     source?: string;
     target?: string;
     prId?: string;

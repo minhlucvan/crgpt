@@ -1,13 +1,14 @@
 export type Config = {
+    output: 'console' | 'bitbucket' | 'github' | 'file';
     bitbucket?: {
-      repoSlug: string;
-      accessToken: string;
-      owner: string;
+      repoSlug?: string;
+      accessToken?: string;
+      owner?: string;
     };
     github?: {
-      repoSlug: string;
-      accessToken: string;
-      owner: string;
+      repoSlug?: string;
+      accessToken?: string;
+      owner?: string;
     },
     file?: {
       path: string;
@@ -21,6 +22,7 @@ export type Config = {
       prompt: string;
       checklist: string;
       summary: string;
+      ignoreFiles: string[];
     };
   };
 
