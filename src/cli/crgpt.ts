@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { Command, Argument } from "commander";
-import { runCRGPT, runCRGPTCLI } from "../lib";
-import { readConfig } from "./config";
+import { runCRGPTCLI } from "../lib";
+import { prepareConfig } from "./config";
 import { initCRGPT } from "./init";
 import { CrGPTCLIOptions } from "./types";
 
@@ -31,17 +31,18 @@ program
         target: targetBranch,
         config: configPath,
       } = options;
-      
-      const config = await readConfig(configPath);
 
       switch (action) {
         case "init":
           await initCRGPT(configPath, options);
+          break;
         case "review":
+          const config = await prepareConfig(configPath, options);
           if (!sourceBranch || !targetBranch) {
             throw new Error("Please provide source and target branch names");
           }
-          await runCRGPT({ sourceBranch, targetBranch, prId }, config);
+          await runCRGPTCLI({ sourceBranch, targetBranch, prId }, config);
+          break;
         case "diff":
           throw new Error("Not implemented");
         case "desc":

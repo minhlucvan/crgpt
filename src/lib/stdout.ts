@@ -5,8 +5,7 @@ export async function printCodeReviewToConsole(
 ): Promise<any> {
   const commentContent = result.content;
 
-  return new Promise((resolve) => {
-    console.log(`Code review comment`);
-    console.log(commentContent);
-  });
+  console.log('===================');
+  console.log(commentContent);
+  console.log('===================');
 }
