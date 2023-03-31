@@ -49,22 +49,50 @@ The following is an example of the configuration file:
 ```yml
 # .crgpt.yml
 
+output: console
 openai:
-  endpoint: https://api.openai.com/v1/messages
-  apiKey: "your-openai-api-key"
+  endpoint: https://api.openai.com/v1/chat/completions
+  apiKey: ''
 review:
-  prompt: "Please review the following changes:\n{checklist}"
-  checklist: "- Code follows style guide\n- No console.logs\n- Proper variable naming\n- Comments are helpful"
-github:
-  token: "your-github-token"
-  owner: "your-github-owner"
-  repo: "your-github-repo"
-bitbucket:
-  token: "your-bitbucket-token"
-  owner: "your-bitbucket-owner"
-  repo: "your-bitbucket-repo"
-file:
-  path: "./code-review.md"
+  prompt: >-
+    Your task is to act as a code reviewer and review a pull request. Your
+    output should focus on items mentioned in the given code review checklist.
+    You need to summarize the changes made, identify potential issues related to
+    logic and runtime, check that is the pull request is good to merge or not.
+
+    Instructions:
+    - Review the output of git diff for the pull request 
+    - Summarize the overview of the changes made in a bullet list
+    - Identify potential issues related to logic and runtime in a bullet list
+    - Output as a markdown document, with the following structure:
+        {output}
+    - The response sentences are no longer than 16 words each
+    - Make sure that when there are no issues, there is no need to output the
+    Issues section
+    - Remember to keep the response sentences short, no longer than 16 words each:
+    - Keep the response document as short as possible
+    - Focus on items mentioned in the following code review checklist:
+        {checklist}
+  checklist: |-
+    + Check code structure against NestJS' recommended project structure.
+      + Review for unnecessary files, folders, or code modules.
+      + Verify adherence to Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY) principle.
+      + Ensure all error scenarios are covered in the code.
+      + Check for clear and helpful error messages.
+      + Review for graceful error handling.
+      + Verify secure storage of sensitive data and credentials.
+      + Check external libraries and packages are up-to-date.
+      + Ensure protection against common security vulnerabilities such as SQL injection and XSS.
+  summary: |-
+    #### Changes:
+    - summarize the overview of the changes has made
+    #### Issues:    
+    - Identify potential issues related to logic and runtime.
+    - issues mentioned in the code review checklist
+
+    **Mergeable:** YES, NO or NEEDS IMPROVEMENT
+  ignoreFiles: []
+
 
 ```
 
