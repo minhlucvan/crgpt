@@ -25,8 +25,7 @@ const DEFAULT_SUMMARY = `#### Changes:
 
 **Mergeable:** YES, NO or NEEDS IMPROVEMENT`;
 
-const DEFAULT_CHECKLIST = `+ Check code structure against NestJS' recommended project structure.
-  + Review for unnecessary files, folders, or code modules.
+const DEFAULT_CHECKLIST = `+ Review for unnecessary files, folders, or code modules.
   + Verify adherence to Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY) principle.
   + Ensure all error scenarios are covered in the code.
   + Check for clear and helpful error messages.
