@@ -81,7 +81,6 @@ review:
     - Focus on items mentioned in the following code review checklist:
         {checklist}
   checklist: |-
-    + Check code structure against NestJS' recommended project structure.
       + Review for unnecessary files, folders, or code modules.
       + Verify adherence to Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY) principle.
       + Ensure all error scenarios are covered in the code.
