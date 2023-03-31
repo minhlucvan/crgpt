@@ -93,6 +93,20 @@ export async function prepareConfig(
     };
   }
 
+  if(options.projectSlug) {
+    config.bitbucket = {
+      ...config.bitbucket,
+      owner: options.projectSlug,
+    };
+  }
+
+  if(options.repoSlug) {
+    config.bitbucket = {
+      ...config.bitbucket,
+      repoSlug: options.repoSlug,
+    };
+  }
+
   if (options.githubToken) {
     config.github = { ...config.github, accessToken: options.githubToken };
   }

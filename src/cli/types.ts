@@ -6,6 +6,8 @@ export interface CrGPTCLIOptions {
     aiToken?: string;
     githubToken?: string;
     bitbucketToken?: string;
+    projectSlug?: string;
+    repoSlug?: string;
     config: string;
   }
   
