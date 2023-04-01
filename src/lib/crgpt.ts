@@ -113,14 +113,32 @@ async function processDiffs(
   config: Config,
   prId?: string
 ): Promise<FileReviewResult[]> {
-  return Promise.all(
-    diffData.map(async ({ file, diff }) => {
-      console.log(`Processing file: ${file}`);
-      const result = (await postDiffToEndpoint(diff, config)) as string;
-      return { file, review: result };
-    })
-  );
+  const results: FileReviewResult[] = [];
+
+  for (const { file, diff } of diffData) {
+    console.log(`Processing file: ${file}`);
+    try {
+      const review = await processDiff(diff, config);
+      results.push({ file, review });
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } catch (error) {
+      console.error(`Failed to process file ${file}: ${error}`);
+      results.push({ file, review: `Couldn\'t process review ${error}` });
+    }
+  }
+
+  return results;
 }
+
+async function processDiff(diff: string, config: Config): Promise<string> {
+  try {
+    const result = await postDiffToEndpoint(diff, config);
+    return result as string;
+  } catch (error) {
+    throw new Error(`Failed to post diff to endpoint: ${error}`);
+  }
+}
+
 
 async function summarizeCRContent(
   results: FileReviewResult[],
