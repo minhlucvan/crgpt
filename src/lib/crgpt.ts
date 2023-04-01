@@ -29,7 +29,6 @@ export async function generateDiffs(
     const diff = await generateContentDiff(sourceBranch, targetBranch, file, config);
     diffs.push({ file, diff });
   }
-
   return diffs;
 }
 
@@ -40,7 +39,7 @@ async function generateContentDiff(
   config: Config,
 ): Promise<string> {
   const diffArgs = config.code.gitDiffOArgs || '';
-  const command = `git diff ${diffArgs} ${sourceBranch}..${targetBranch} -- "${file}"`;
+  const command = `git diff ${diffArgs} ${targetBranch}..${sourceBranch} -- "${file}"`;
   const stdout = await execAsync(command);
 
   return stdout;
