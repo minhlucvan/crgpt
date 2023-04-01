@@ -1,6 +1,6 @@
 {
   "name": "crgpt",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "CLI tool that leverages ChatGPT API to perform code reviews and providing suggestions for improving code quality.",
   "keywords": [
     "code-review",

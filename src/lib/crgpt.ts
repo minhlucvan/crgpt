@@ -12,7 +12,7 @@ import { postCommentToGithubPR } from './github';
 import { writeCodeReviewToFile } from './markdown';
 import { printCodeReviewToConsole } from './stdout';
 
-async function generateDiffs(
+export async function generateDiffs(
   sourceBranch: string,
   targetBranch: string,
   config: Config,
@@ -20,45 +20,52 @@ async function generateDiffs(
   const command = `git diff ${sourceBranch}..${targetBranch} --name-only`;
   const ignoreFiles = config.review.ignoreFiles || [];
 
-  return new Promise((resolve, reject) => {
-    exec(command, async (error, stdout, stderr) => {
-      if (error) {
-        reject(new Error(`Error: ${error.message}`));
-        return;
-      }
+  const stdout = await execAsync(command);
+  const files = stdout.trim().split('\n');
+  const reviewableFiles = selectReviewableFiles(files, ignoreFiles);
+  const diffs = [];
 
-      if (stderr) {
-        reject(new Error(`Stderr: ${stderr}`));
-        return;
-      }
+  for (const file of reviewableFiles) {
+    const diff = await generateContentDiff(sourceBranch, targetBranch, file, config);
+    diffs.push({ file, diff });
+  }
 
-      const files = stdout.trim().split('\n');
-      const diffs = await Promise.all(
-        files.filter(file => !ignoreFiles.includes(file)).map(async (file) => {
-          const diffCommand = `git diff ${sourceBranch}..${targetBranch} -- "${file}"`;
-          const diff = await execAsync(diffCommand);
-          return { file, diff };
-        })
-      );
+  return diffs;
+}
 
-      resolve(diffs);
-    });
+async function generateContentDiff(
+  sourceBranch: string,
+  targetBranch: string,
+  file: string,
+  config: Config,
+): Promise<string> {
+  const diffArgs = config.code.gitDiffOArgs || '';
+  const command = `git diff ${diffArgs} ${sourceBranch}..${targetBranch} -- "${file}"`;
+  const stdout = await execAsync(command);
+
+  return stdout;
+}
+
+function selectReviewableFiles(files: string[], ignoreFiles: string[]): string[] {
+  return files.filter(file => {
+    if (ignoreFiles.includes(file)) {
+      return false;
+    }
+    // Add more conditions if required.
+    return true;
   });
 }
 
-async function execAsync(command: string): Promise<string> {
-  return new Promise((resolve, reject) => {
+function execAsync(command: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
         reject(new Error(`Error: ${error.message}`));
-        return;
-      }
-      if (stderr) {
+      } else if (stderr) {
         reject(new Error(`Stderr: ${stderr}`));
-        return;
+      } else {
+        resolve(stdout);
       }
-
-      resolve(stdout);
     });
   });
 }

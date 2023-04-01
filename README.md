@@ -25,13 +25,17 @@ Where action is one of the following options:
 
 And options are the command-line arguments:
 
-- `-s, --source <source>`: the name of the source branch
-- `-t, --target <target>`: the name of the target branch
-- `-p, --prId [prId]`: the ID of the pull request
-- `-at, --ai-token [accessToken]`: the OpenAI access token
-- `-gt, --github-token [accessToken]`: the GitHub access token
-- `-bt, --bitbucket-token [accessToken]`: the Bitbucket access token
-- `-c, --config [config]`: the path of the configuration file (default is .crgpt.yml)
+- `-o, --output <output>`: Specify the output method.
+- `-s, --source <source>`: Specify the source branch name.
+- `-t, --target <target>`: Specify the target branch name.
+- `-d, --diff-args [diffArgs]`: Specify Git diff arguments.
+- `-p, --prId [prId]`: Specify the pull request ID.
+- `-ps, --project-slug [projectSlug]`: Specify the Bitbucket project slug.
+- `-rs, --repo-slug [repoSlug]`: Specify the Bitbucket repo slug.
+- `-at, --ai-token [accessToken]`: Specify the OpenAI access token.
+- `-gt, --github-token [accessToken]`: Specify the GitHub access token.
+- `-bt, --bitbucket-token [accessToken]`: Specify the Bitbucket access token.
+- `-c, --config [config]`: Specify the path to the configuration file (default is ".crgpt.yml").
 
 For example, to perform a code review on a pull request with ID 123, you can use the following command:
 
