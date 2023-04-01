@@ -18,6 +18,9 @@ export type Config = {
       endpoint: string;
       apiKey: string;
     };
+    code: {
+      gitDiffOArgs: string;
+    }
     review: {
       prompt: string;
       checklist: string;

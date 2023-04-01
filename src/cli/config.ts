@@ -40,6 +40,9 @@ const DEFAULT_CONFIG: Config = {
     endpoint: "https://api.openai.com/v1/chat/completions",
     apiKey: "",
   },
+  code: {
+    gitDiffOArgs: "",
+  },
   review: {
     prompt: DEFAULT_PROMPT,
     checklist: DEFAULT_CHECKLIST,
@@ -83,6 +86,13 @@ export async function prepareConfig(
 
   if(options.output) {
     config.output = options.output;
+  }
+
+  if(options.diffArgs) { 
+    config.code = {
+      ...config.code,
+      gitDiffOArgs: options.diffArgs,
+    };
   }
 
   if (options.aiToken) {

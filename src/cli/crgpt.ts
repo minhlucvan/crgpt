@@ -18,6 +18,7 @@ program
   .option("-o, --output <output>", "output method")
   .option("-s, --source <source>", "Source branch name")
   .option("-t, --target <target>", "Target branch name")
+  .option("-d, --diff-args [diffArgs]", "Git diff arguments")
   .option("-p, --prId [prId]", "Pull request ID")
   .option("-ps, --project-slug [projectSlug]", "Bitbucket project slug")
   .option("-rs, --repo-slug [repoSlug]", "Bitbucket repo slug")
