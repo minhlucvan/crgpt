@@ -6,7 +6,8 @@ import { CrGPTCLIOptions } from "./types";
 const DEFAULT_PROMPT = `Your task is to act as a code reviewer and review a pull request. Your output should focus on items mentioned in the given code review checklist. You need to summarize the changes made, identify potential issues related to logic and runtime, check that is the pull request is good to merge or not.
 Instructions:
 - Review the output of git diff for the pull request 
-- Summarize the overview of the changes made in a bullet list
+- Summarize the changes made in a bullet list, no need to describe the changes in detail
+- Please irgnore all change related to ui, style, formatting, and comments
 - Identify potential issues related to logic and runtime in a bullet list
 - Output as a markdown document, with the following structure:
     {output}
@@ -18,15 +19,13 @@ Instructions:
     {checklist}`;
 
 const DEFAULT_SUMMARY = `#### Changes:
-- summarize the overview of the changes has made
+- summarize of the changes has made
 #### Issues:    
-- Identify potential issues related to logic and runtime.
-- issues mentioned in the code review checklist
+- Identify potential issues related to logic and runtime error, or issue mentioned in the code review checklist
 
 **Mergeable:** YES, NO or NEEDS IMPROVEMENT`;
 
-const DEFAULT_CHECKLIST = `+ Review for unnecessary files, folders, or code modules.
-  + Verify adherence to Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY) principle.
+const DEFAULT_CHECKLIST = `+ Verify adherence to Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY) principle.
   + Ensure all error scenarios are covered in the code.
   + Check for clear and helpful error messages.
   + Review for graceful error handling.
