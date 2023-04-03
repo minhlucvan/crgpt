@@ -10,28 +10,42 @@ Instructions:
 - Please irgnore all change related to ui, style, formatting, and comments
 - Identify potential issues related to logic and runtime in a bullet list
 - Output as a markdown document, with the following structure:
-    {output}
+{output}
 - The response sentences are no longer than 16 words each
 - Make sure that when there are no issues, there is no need to output the Issues section
 - Remember to keep the response sentences short, no longer than 16 words each:
 - Keep the response document as short as possible
 - Focus on items mentioned in the following code review checklist:
-    {checklist}`;
+{checklist}`;
 
-const DEFAULT_SUMMARY = `#### Changes:
-- summarize of the changes has made
-#### Issues:    
-- Identify potential issues related to logic and runtime error, or issue mentioned in the code review checklist
+const DEFAULT_SUMMARY = `
+    ## What Changed:
+    - Summarize the changes made in the code.
 
-**Mergeable:** YES, NO or NEEDS IMPROVEMENT`;
+    ## What's Wrong:
+    - Identify any issues or problems in the code.
+    - Point out any errors, bugs, or inconsistencies.
+    - Highlight any potential risks or side effects.
 
-const DEFAULT_CHECKLIST = `+ Verify adherence to Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY) principle.
-  + Ensure all error scenarios are covered in the code.
-  + Check for clear and helpful error messages.
-  + Review for graceful error handling.
-  + Verify secure storage of sensitive data and credentials.
-  + Check external libraries and packages are up-to-date.
-  + Ensure protection against common security vulnerabilities such as SQL injection and XSS.`;
+    ## Impact:
+    - Analyze the impact of the changes made.
+    - Point out how the changes will affect the overall system.
+
+    ## What Could be Improved:
+    - Suggest improvements or optimizations that could be made.
+    - Provide feedback on coding style, naming convention, and best practices.
+    - Discuss any areas where the code could be made more maintainable.
+
+    ## Mergeable: YES/NO or NA`;
+
+const DEFAULT_CHECKLIST = `
+    + Verify adherence to Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY) principle.
+    + Ensure all error scenarios are covered in the code.
+    + Check for clear and helpful error messages.
+    + Review for graceful error handling.
+    + Verify secure storage of sensitive data and credentials.
+    + Check external libraries and packages are up-to-date.
+    + Ensure protection against common security vulnerabilities such as SQL injection and XSS.`;
 
 const DEFAULT_CONFIG: Config = {
   output: "console",
