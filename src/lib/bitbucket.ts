@@ -1,19 +1,27 @@
 import fetch from 'node-fetch';
+import { parseStringTemplate } from '../utils/strings';
 import { Config, ReviewSumary } from './types';
 
 export async function postCommentToBitbucketPR(
     result: ReviewSumary,
-    bitbucketConfig: Config['bitbucket'],
+    config: Config,
     prId: string
   ): Promise<any> {
-    if (!bitbucketConfig) {
+    if (!config.bitbucket) {
       throw new Error(`Bitbucket configuration is not provided`);
     }
 
     console.log(`Posting comment to Bitbucket PR: ${prId}`);
   
-    const { repoSlug, accessToken, owner } = bitbucketConfig;
-    const apiUrl = `https://api.bitbucket.org/2.0/repositories/${owner}/${repoSlug}/pullrequests/${prId}/comments`;
+    const { accessToken, endpoint } = config.bitbucket;
+    const { repoSlug, projectSlug } = config.code;
+    const apiEndpoint = endpoint || 'https://api.bitbucket.org/2.0/repositories/${owner}/${repoSlug}/pullrequests/${prId}/comments'
+    const apiUrl = parseStringTemplate(apiEndpoint, {
+      owner: projectSlug,
+      repoSlug,
+      prId,
+    });
+    
     const commentContent = result.content;
     const bodyData = {
       content: {

@@ -3,13 +3,13 @@ import { Config, ReviewSumary } from './types';
 
 export async function writeCodeReviewToFile(
   result: ReviewSumary,
-  fileConfig: Config['file'],
+  config: Config,
 ): Promise<any> {
-  if (!fileConfig) {
+  if (!config.file) {
     throw new Error(`GitHub configuration is not provided`);
   }
 
-  const { path, name } = fileConfig;
+  const { path, name } = config.file;
   const fileName = `${path}/${name}`;
   const commentContent = result.content;
 

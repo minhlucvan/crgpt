@@ -3,16 +3,15 @@ import { promises as fs } from "fs";
 import { Config } from "../lib/types";
 import { CrGPTCLIOptions } from "./types";
 
-const DEFAULT_PROMPT = `Your task is to act as a code reviewer and review a pull request. Your output should focus on items mentioned in the given code review checklist. You need to summarize the changes made, identify potential issues related to logic and runtime, check that is the pull request is good to merge or not.
+const DEFAULT_PROMPT = `Your task is to act as a code reviewer, and review a pull request by analyze the git diff. You need to summarize the changes made, identify potential issues related to logic and runtime issue, check that is the pull request is good to merge or not.
 Instructions:
 - Review the output of git diff for the pull request 
-- Summarize the changes made in a bullet list, no need to describe the changes in detail
-- Please irgnore all change related to ui, style, formatting, and comments
-- Identify potential issues related to logic and runtime in a bullet list
+- Summarize the changes made, and what was added, removed, or modified in a bullet list
+- Please ignore all change related to ui, style, formatting, and comments
+- Identify potential issues related to logic and runtime errors in a bullet list
 - Output as a markdown document, with the following structure:
 {output}
 - The response sentences are no longer than 16 words each
-- Make sure that when there are no issues, there is no need to output the Issues section
 - Remember to keep the response sentences short, no longer than 16 words each:
 - Keep the response document as short as possible
 - Focus on items mentioned in the following code review checklist:
@@ -20,23 +19,20 @@ Instructions:
 
 const DEFAULT_SUMMARY = `
     ## What Changed:
-    - Summarize the changes made in the code.
+    - Summarize the changes made in general.
+    - Describe what was added, removed, or modified in a bullet list.
 
     ## What's Wrong:
     - Identify any issues or problems in the code.
-    - Point out any errors, bugs, or inconsistencies.
+    - Point out any potential errors, bugs, or inconsistencies.
     - Highlight any potential risks or side effects.
-
-    ## Impact:
-    - Analyze the impact of the changes made.
-    - Point out how the changes will affect the overall system.
 
     ## What Could be Improved:
     - Suggest improvements or optimizations that could be made.
     - Provide feedback on coding style, naming convention, and best practices.
-    - Discuss any areas where the code could be made more maintainable.
+    - Point out areas where the code could be made more maintainable.
 
-    ## Mergeable: YES/NO or NA`;
+    ## Mergeable: YES/NO or Review Needed `;
 
 const DEFAULT_CHECKLIST = `
     + Verify adherence to Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY) principle.
@@ -45,12 +41,13 @@ const DEFAULT_CHECKLIST = `
     + Review for graceful error handling.
     + Verify secure storage of sensitive data and credentials.
     + Check external libraries and packages are up-to-date.
-    + Ensure protection against common security vulnerabilities such as SQL injection and XSS.`;
+    + Ensure protection against common security vulnerabilities.`;
 
 const DEFAULT_CONFIG: Config = {
   output: "console",
   openai: {
     endpoint: "https://api.openai.com/v1/chat/completions",
+    model: "gpt-3.5-turbo",
     apiKey: "",
   },
   code: {
@@ -101,10 +98,9 @@ export async function prepareConfig(
     config.output = options.output;
   }
 
-  if(options.diffArgs) { 
-    config.code = {
-      ...config.code,
-      gitDiffOArgs: options.diffArgs,
+  if(options.model) {
+    config.openai = {
+      ...config.openai,
     };
   }
 
@@ -119,16 +115,31 @@ export async function prepareConfig(
     };
   }
 
+  
+  if (options.githubToken) {
+    config.github = {
+      ...config.github,
+      accessToken: options.githubToken,
+    };
+  }
+
+  if(options.diffArgs) { 
+    config.code = {
+      ...config.code,
+      gitDiffOArgs: options.diffArgs,
+    };
+  }
+
   if(options.projectSlug) {
-    config.bitbucket = {
-      ...config.bitbucket,
-      owner: options.projectSlug,
+    config.code = {
+      ...config.code,
+      projectSlug: options.projectSlug,
     };
   }
 
   if(options.repoSlug) {
-    config.bitbucket = {
-      ...config.bitbucket,
+    config.code = {
+      ...config.code,
       repoSlug: options.repoSlug,
     };
   }

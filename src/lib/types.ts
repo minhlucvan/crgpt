@@ -1,14 +1,12 @@
 export type Config = {
     output: 'console' | 'bitbucket' | 'github' | 'file';
     bitbucket?: {
-      repoSlug?: string;
+      endpoint?: string;
       accessToken?: string;
-      owner?: string;
     };
     github?: {
-      repoSlug?: string;
+      endpoint?: string;
       accessToken?: string;
-      owner?: string;
     },
     file?: {
       path: string;
@@ -16,10 +14,13 @@ export type Config = {
     },
     openai: {
       endpoint: string;
+      model: string;
       apiKey: string;
     };
     code: {
-      gitDiffOArgs: string;
+      gitDiffOArgs?: string;
+      projectSlug?: string;
+      repoSlug?: string;
     }
     review: {
       prompt: string;
