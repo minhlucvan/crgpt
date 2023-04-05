@@ -23,6 +23,9 @@ export async function postCommentToGithubPR(
     endpoint ||
     "https://api.github.com/repos/${projectSlug}/${repoSlug}/pulls/${prId}/comments";
   const apiUrl = parseStringTemplate(apiEndpoint, { projectSlug, repoSlug, prId });
+
+  console.log(`Posting comment to GitHub PR: ${apiUrl}`);
+
   const commitId = await getCurrentCommitId();
   for (const fileReview of result.reviews) {
     await postCommentToGithubPRFile(fileReview, apiUrl, commitId, accessToken);
