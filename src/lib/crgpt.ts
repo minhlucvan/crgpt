@@ -26,7 +26,7 @@ async function postDiffToEndpoint(
   const apiKey = config.openai.apiKey;
   const promptTml = config.review.prompt;
   const checklist = config.review.checklist;
-  const summary = config.review.summary
+  const summary = config.review.summary;
   const prompt = promptTml.replace('{checklist}', checklist).replace('{output}', summary);
 
   const response = await fetch(endpointUrl, {
@@ -36,7 +36,7 @@ async function postDiffToEndpoint(
       'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'gpt-3.5-turbo-0301',
+      model: config.openai.model || 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
