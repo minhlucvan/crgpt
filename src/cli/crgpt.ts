@@ -20,6 +20,8 @@ program
   .option("-t, --target <target>", "Target branch name")
   .option("-d, --diff-args [diffArgs]", "Git diff arguments")
   .option("-p, --prId [prId]", "Pull request ID")
+  .option("-m, --model [model]", "Openai model", "gpt-3.5-turbo")
+  .option("-co, --commit [commitId]", "Commit ID")
   .option("-ps, --project-slug [projectSlug]", "Bitbucket project slug")
   .option("-rs, --repo-slug [repoSlug]", "Bitbucket repo slug")
   .option("-at, --ai-token [accessToken]", "Openai Access token")

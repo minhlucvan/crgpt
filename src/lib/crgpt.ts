@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+
 import fetch from 'node-fetch';
 import {
   Config,
@@ -11,69 +11,14 @@ import { postCommentToBitbucketPR } from './bitbucket';
 import { postCommentToGithubPR } from './github';
 import { writeCodeReviewToFile } from './markdown';
 import { printCodeReviewToConsole } from './stdout';
+import { generateDiffs } from './git';
 
-export async function generateDiffs(
-  sourceBranch: string,
-  targetBranch: string,
-  config: Config,
-): Promise<Diff[]> {
-  const command = `git diff ${sourceBranch}..${targetBranch} --name-only`;
-  const ignoreFiles = config.review.ignoreFiles || [];
-
-  const stdout = await execAsync(command);
-  const files = stdout.trim().split('\n');
-  const reviewableFiles = selectReviewableFiles(files, ignoreFiles);
-  const diffs = [];
-
-  for (const file of reviewableFiles) {
-    const diff = await generateContentDiff(sourceBranch, targetBranch, file, config);
-    diffs.push({ file, diff });
-  }
-  return diffs;
-}
-
-async function generateContentDiff(
-  sourceBranch: string,
-  targetBranch: string,
-  file: string,
-  config: Config,
-): Promise<string> {
-  const diffArgs = config.code.gitDiffOArgs || '';
-  const command = `git diff ${diffArgs} ${targetBranch}..${sourceBranch} -- "${file}"`;
-  const stdout = await execAsync(command);
-
-  return stdout;
-}
-
-function selectReviewableFiles(files: string[], ignoreFiles: string[]): string[] {
-  return files.filter(file => {
-    if (ignoreFiles.includes(file)) {
-      return false;
-    }
-    // Add more conditions if required.
-    return true;
-  });
-}
-
-function execAsync(command: string): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(new Error(`Error: ${error.message}`));
-      } else if (stderr) {
-        reject(new Error(`Stderr: ${stderr}`));
-      } else {
-        resolve(stdout);
-      }
-    });
-  });
-}
 
 async function postDiffToEndpoint(
   diffData: string,
   config: Config
 ): Promise<string> {
-  if(!config.openai) { 
+  if (!config.openai) {
     throw new Error('Error: OpenAI config not found');
   }
 
@@ -83,7 +28,7 @@ async function postDiffToEndpoint(
   const checklist = config.review.checklist;
   const summary = config.review.summary
   const prompt = promptTml.replace('{checklist}', checklist).replace('{output}', summary);
-  
+
   const response = await fetch(endpointUrl, {
     method: 'POST',
     headers: {
@@ -153,7 +98,7 @@ async function summarizeCRContent(
   const header = '# Code Review Summary:';
   const fileSummaries = results
     .map(({ file, review }) => `### ${file}\n  \n${review}`)
-    .join('\n\n  ');
+    .join('\n\n');
   const content = `${header}\n\n${fileSummaries}`;
 
   return {
@@ -191,11 +136,11 @@ export async function runCRGPTCLI(
   const { prId } = options;
   const commentContent = await runCRGPT(options, config);
 
-  if (config.output =='bitbucket' && config.bitbucket && prId) {
+  if (config.output == 'bitbucket' && config.bitbucket && prId) {
     await postCommentToBitbucketPR(commentContent, config.bitbucket, prId);
-  } else if (config.output =='github' && config.github && prId) {
+  } else if (config.output == 'github' && config.github && prId) {
     await postCommentToGithubPR(commentContent, config.github, prId);
-  } else if (config.output =='file' && config.file) {
+  } else if (config.output == 'file' && config.file) {
     await writeCodeReviewToFile(commentContent, config.file);
   } else {
     printCodeReviewToConsole(commentContent);

@@ -30,6 +30,8 @@ And options are the command-line arguments:
 - `-t, --target <target>`: Specify the target branch name.
 - `-d, --diff-args [diffArgs]`: Specify Git diff arguments.
 - `-p, --prId [prId]`: Specify the pull request ID.
+- `-m, --model [model]`, Openai model (default is "gpt-3.5-turbo")
+- `-co, --commit [commitId]`, Commit ID
 - `-ps, --project-slug [projectSlug]`: Specify the Bitbucket project slug.
 - `-rs, --repo-slug [repoSlug]`: Specify the Bitbucket repo slug.
 - `-at, --ai-token [accessToken]`: Specify the OpenAI access token.

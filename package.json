@@ -1,14 +1,14 @@
 {
   "name": "crgpt",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "description": "CLI tool that leverages ChatGPT API to perform code reviews and providing suggestions for improving code quality.",
   "keywords": [
-    "code-review",
-    "code-quality",
-    "chatgpt",
-    "chatbot",
+    "crgpt",
+    "code-review-chatgpt",
+    "code-review-tool",
+    "code-review-gpt",
     "code-review-bot",
-    "code-quality-bot"
+    "chatgpt-code-review"
   ],
   "main": "index.js",
   "scripts": {
