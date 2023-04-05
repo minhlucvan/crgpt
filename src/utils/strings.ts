@@ -12,7 +12,7 @@ function indexProp(obj: Record<string, any>, is: string | string[], value?: any)
     }
 }
 
-function parseStringTemplate(str: string, obj: Record<string, any>): string {
+export function parseStringTemplate(str: string, obj: Record<string, any>): string {
     const re = /\$\{([^{}]+)\}/g;
     return str.replace(re, (match, name) => {
         try {
