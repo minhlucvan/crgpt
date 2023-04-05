@@ -2,16 +2,11 @@ export type Config = {
     output: 'console' | 'bitbucket' | 'github' | 'file';
     bitbucket?: {
       endpoint?: string;
-      repoSlug?: string;
       accessToken?: string;
-      owner?: string;
     };
     github?: {
       endpoint?: string;
-      commitId?: string;
-      repoSlug?: string;
       accessToken?: string;
-      owner?: string;
     },
     file?: {
       path: string;
@@ -23,7 +18,9 @@ export type Config = {
       apiKey: string;
     };
     code: {
-      gitDiffOArgs: string;
+      gitDiffOArgs?: string;
+      projectSlug?: string;
+      repoSlug?: string;
     }
     review: {
       prompt: string;

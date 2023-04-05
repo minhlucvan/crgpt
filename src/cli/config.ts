@@ -98,10 +98,9 @@ export async function prepareConfig(
     config.output = options.output;
   }
 
-  if(options.diffArgs) { 
-    config.code = {
-      ...config.code,
-      gitDiffOArgs: options.diffArgs,
+  if(options.model) {
+    config.openai = {
+      ...config.openai,
     };
   }
 
@@ -116,16 +115,31 @@ export async function prepareConfig(
     };
   }
 
+  
+  if (options.githubToken) {
+    config.github = {
+      ...config.github,
+      accessToken: options.githubToken,
+    };
+  }
+
+  if(options.diffArgs) { 
+    config.code = {
+      ...config.code,
+      gitDiffOArgs: options.diffArgs,
+    };
+  }
+
   if(options.projectSlug) {
-    config.bitbucket = {
-      ...config.bitbucket,
-      owner: options.projectSlug,
+    config.code = {
+      ...config.code,
+      projectSlug: options.projectSlug,
     };
   }
 
   if(options.repoSlug) {
-    config.bitbucket = {
-      ...config.bitbucket,
+    config.code = {
+      ...config.code,
       repoSlug: options.repoSlug,
     };
   }

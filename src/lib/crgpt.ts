@@ -137,11 +137,11 @@ export async function runCRGPTCLI(
   const commentContent = await runCRGPT(options, config);
 
   if (config.output == 'bitbucket' && config.bitbucket && prId) {
-    await postCommentToBitbucketPR(commentContent, config.bitbucket, prId);
+    await postCommentToBitbucketPR(commentContent, config, prId);
   } else if (config.output == 'github' && config.github && prId) {
-    await postCommentToGithubPR(commentContent, config.github, prId);
+    await postCommentToGithubPR(commentContent, config, prId);
   } else if (config.output == 'file' && config.file) {
-    await writeCodeReviewToFile(commentContent, config.file);
+    await writeCodeReviewToFile(commentContent, config);
   } else {
     printCodeReviewToConsole(commentContent);
   }

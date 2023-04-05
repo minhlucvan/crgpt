@@ -5,21 +5,27 @@ import { Config, FileReviewResult, ReviewSumary } from "./types";
 
 export async function postCommentToGithubPR(
   result: ReviewSumary,
-  githubConfig: Config["github"],
+  config: Config,
   prId: string
 ): Promise<any> {
-  if (!githubConfig) {
+  if (!config.github) {
     throw new Error(`GitHub configuration is not provided`);
   }
 
-  const { repoSlug, owner } = githubConfig;
+  const { repoSlug, projectSlug } = config.code;
+  const { endpoint, accessToken } = config.github;
+
+  if (!accessToken) {
+    throw new Error(`GitHub access token is not provided`);
+  }
+
   const apiEndpoint =
-    githubConfig.endpoint ||
-    "https://api.github.com/repos/${owner}/${repoSlug}/pulls/${prId}/comments";
-  const apiUrl = parseStringTemplate(apiEndpoint, { owner, repoSlug, prId });
-  const commitId = githubConfig.commitId || await getCurrentCommitId();
+    endpoint ||
+    "https://api.github.com/repos/${projectSlug}/${repoSlug}/pulls/${prId}/comments";
+  const apiUrl = parseStringTemplate(apiEndpoint, { projectSlug, repoSlug, prId });
+  const commitId = await getCurrentCommitId();
   for (const fileReview of result.reviews) {
-    await postCommentToGithubPRFile(fileReview, apiUrl, commitId, githubConfig);
+    await postCommentToGithubPRFile(fileReview, apiUrl, commitId, accessToken);
   }
   console.log(`Posted ${result.reviews.length} comments to GitHub PR`);
 }
@@ -28,11 +34,8 @@ export async function postCommentToGithubPRFile(
   fileReview: FileReviewResult,
   apiUrl: string,
   commitId: string,
-  githubConfig: Config["github"],
+  accessToken: string,
 ): Promise<any> {
-  if (!githubConfig) {
-    throw new Error(`GitHub configuration is not provided`);
-  }
 
   const bodyData = {
     body: fileReview.review,
@@ -43,7 +46,7 @@ export async function postCommentToGithubPRFile(
   const response = await fetch(apiUrl, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${githubConfig.accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
       Accept: "application/vnd.github.v3+json",
       "Content-Type": "application/json",
       "X-GitHub-Api-Version": "2022-11-28",

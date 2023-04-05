@@ -10,6 +10,7 @@ export interface CrGPTCLIOptions {
     projectSlug?: string;
     repoSlug?: string;
     config: string;
+    model?: string;
     output?: 'console' | 'bitbucket' | 'github' | 'file';
   }
   
