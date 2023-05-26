@@ -71,7 +71,7 @@ async function processDiffs(
     try {
       const review = await processDiff(diff, config);
       results.push({ file, review });
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 500));
     } catch (error) {
       console.error(`Failed to process file ${file}: ${error}`);
       results.push({ file, review: `Couldn\'t process review ${error}` });
@@ -97,7 +97,7 @@ async function summarizeCRContent(
 ): Promise<ReviewSumary> {
   const header = '# Code Review Summary:';
   const fileSummaries = results
-    .map(({ file, review }) => `### ${file}\n  \n${review}`)
+    .map(({ file, review }) => `====${file}====\n${review}`)
     .join('\n\n');
   const content = `${header}\n\n${fileSummaries}`;
 
