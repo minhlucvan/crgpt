@@ -116,6 +116,29 @@ In the configuration file, you can customize the following parameters:
 - bitbucket: the Bitbucket access token, owner, and repository for posting the code review comment
 - file: the path of the markdown file to write the code review
 
+## Integrations
+
+### Bitbucket
+
+```
+ - step:
+          name: CRGPT Code Review
+          script:
+            - echo "Environment Variables"
+            - echo "BITBUCKET_PR_ID $BITBUCKET_PR_ID"
+            - echo "BITBUCKET_BRANCH $BITBUCKET_BRANCH"
+            - echo "BITBUCKET_PR_DESTINATION_BRANCH $BITBUCKET_PR_DESTINATION_BRANCH"
+            - echo "BITBUCKET_REPO_SLUG $BITBUCKET_REPO_SLUG"
+            - echo "BITBUCKET_WORKSPACE $BITBUCKET_WORKSPACE"
+            - echo "BITBUCKET_ACCESS_TOKEN $BITBUCKET_ACCESS_TOKEN"
+            - echo "OPENAI_TOKEN $OPENAI_TOKEN"
+            - echo "Installing crgpt"
+            - npm install -g crgpt
+            - git fetch origin "+refs/heads/*:refs/remotes/origin/*"
+            - crgpt -o bitbucket -p $BITBUCKET_PR_ID -s "refs/remotes/origin/$BITBUCKET_BRANCH" -t "refs/remotes/origin/$BITBUCKET_PR_DESTINATION_BRANCH" -rs $BITBUCKET_REPO_SLUG -ps $BITBUCKET_WORKSPACE -bt $BITBUCKET_ACCESS_TOKEN -at $OPENAI_TOKEN review
+
+```
+
 ## Contributing
 
 If you want to contribute to CRGPT, please fork the repository, make your changes, and create a pull request.
