@@ -1,5 +1,10 @@
 
-import fetch from 'node-fetch';
+import OpenAI from "openai";
+import { postCommentToBitbucketPR } from './bitbucket';
+import { generateDiffs } from './git';
+import { postCommentToGithubPR } from './github';
+import { writeCodeReviewToFile } from './markdown';
+import { printCodeReviewToConsole } from './stdout';
 import {
   Config,
   Diff,
@@ -7,11 +12,6 @@ import {
   ReviewSumary,
   runCRGPTOptions,
 } from './types';
-import { postCommentToBitbucketPR } from './bitbucket';
-import { postCommentToGithubPR } from './github';
-import { writeCodeReviewToFile } from './markdown';
-import { printCodeReviewToConsole } from './stdout';
-import { generateDiffs } from './git';
 
 
 async function postDiffToEndpoint(
@@ -29,30 +29,33 @@ async function postDiffToEndpoint(
   const summary = config.review.summary;
   const prompt = promptTml.replace('{checklist}', checklist).replace('{output}', summary);
 
-  const response = await fetch(endpointUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: config.openai.model || 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: prompt,
-        },
-        {
-          role: 'user',
-          content: diffData,
-        },
-      ],
-    }),
+
+  const openai = new OpenAI({
+    apiKey: apiKey,
   });
-  if (!response.ok) {
-    throw new Error(`Error posting diff to endpoint: ${response.statusText}`);
+  const response = await openai.chat.completions.create({
+    model: config.openai.model || 'gpt-3.5-turbo',
+    messages: [
+      {
+        role: 'system',
+        content: prompt,
+      },
+      {
+        role: 'user',
+        content: diffData,
+      },
+    ],
+    temperature: 0.7, // TODO make it configurable
+    //max_tokens: 256, // TODO make it configurable
+    //top_p: 1, // TODO make it configurable
+    //frequency_penalty: 0, // TODO make it configurable
+    //presence_penalty: 0, // TODO make it configurable
+  });
+
+  if (! response || !response.id) {
+    throw new Error(`Error posting diff to endpoint: ${response}`);
   }
-  const data = await response.json();
+  const data = await response;
   const { choices } = data as { choices: { message: { content: string } }[] };
   const { message } = choices[0];
   const { content } = message;
