@@ -39,6 +39,7 @@
     "@types/node-fetch": "2",
     "commander": "^10.0.0",
     "js-yaml": "^4.1.0",
-    "node-fetch": "2"
+    "node-fetch": "2",
+    "openai": "^4.20.1"
   }
 }
