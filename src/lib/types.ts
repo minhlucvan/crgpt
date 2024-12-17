@@ -26,6 +26,8 @@ export type Config = {
       prompt: string;
       checklist: string;
       summary: string;
+      includes: string[];
+      excludes: string[];
       ignoreFiles: string[];
     };
   };

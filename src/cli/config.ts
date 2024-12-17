@@ -2,11 +2,13 @@ import yaml from "js-yaml";
 import { promises as fs } from "fs";
 import { Config } from "../lib/types";
 import { CrGPTCLIOptions } from "./types";
+import { getEnvVar } from "../utils/os";
 
-const DEFAULT_PROMPT = `Your task is to act as a code reviewer, and review a pull request by analyze the git diff. You need to summarize the changes made, identify potential issues related to logic and runtime issue, check that is the pull request is good to merge or not.
+const DEFAULT_PROMPT = `Your task is to act as a code reviewer helper, your task is to review a pull request by analyze the git diff output. 
+You need to summarize the changes made, identify potential any syntax, logic, best practices issues, and provide actionable feedback.
 Instructions:
-- Review the output of git diff for the pull request 
-- Summarize the changes made, and what was added, removed, or modified in a bullet list
+- Review the output of git diff for the the changes made in the pull request
+- Summarize the changes made, and what was added, removed, or modified in a bullet list in a ưay that is easiest for the reviewer to understand
 - Please ignore all change related to ui, style, formatting, and comments
 - Identify potential issues related to logic and runtime errors in a bullet list
 - Output as a markdown document, with the following structure:
@@ -15,7 +17,10 @@ Instructions:
 - Remember to keep the response sentences short, no longer than 16 words each:
 - Keep the response document as short as possible
 - Focus on items mentioned in the following code review checklist:
-{checklist}`;
+{checklist}
+- Please ignore any changes that are not having clear action to take.
+- Please ignore any changes that are not mentioned in the code review checklist.
+`;
 
 const DEFAULT_SUMMARY = `
     ## What Changed:
@@ -27,12 +32,12 @@ const DEFAULT_SUMMARY = `
     - Point out any potential errors, bugs, or inconsistencies.
     - Highlight any potential risks or side effects.
 
-    ## What Could be Improved:
-    - Suggest improvements or optimizations that could be made.
-    - Provide feedback on coding style, naming convention, and best practices.
-    - Point out areas where the code could be made more maintainable.
-
-    ## Mergeable: YES/NO or Review Needed `;
+    ## Recommendations:
+    - Provide recommendations or suggestions for improvement, Only actionable feedback, no general comments.
+    - Given clear and concise suggestions for improvement, no vague or ambiguous feedback.
+    - Include any specific tasks or action items that need to be addressed.
+    - Decide if the PR is good to merge.
+    `;
 
 const DEFAULT_CHECKLIST = `
     + Verify adherence to Single Responsibility Principle (SRP) and Don't Repeat Yourself (DRY) principle.
@@ -44,20 +49,31 @@ const DEFAULT_CHECKLIST = `
     + Ensure protection against common security vulnerabilities.`;
 
 const DEFAULT_CONFIG: Config = {
-  output: "console",
+  output: getEnvVar("OUTPUT", "console") as "file" | "console" | "bitbucket" | "github",
   openai: {
-    endpoint: "https://api.openai.com/v1/chat/completions",
-    model: "gpt-3.5-turbo",
-    apiKey: "",
+    endpoint: getEnvVar("OPENAI_ENDPOINT", "https://api.openai.com/v1/chat/completions"),
+    model: getEnvVar("OPENAI_MODEL", "gpt-4o-mini"),
+    apiKey: getEnvVar("OPENAI_API_KEY", ""),
   },
   code: {
-    gitDiffOArgs: "",
+    gitDiffOArgs: getEnvVar("GIT_DIFF_ARGS", ""),
   },
   review: {
     prompt: DEFAULT_PROMPT,
     checklist: DEFAULT_CHECKLIST,
     summary: DEFAULT_SUMMARY,
     ignoreFiles: [],
+    includes: ['**/*'],
+    excludes: [
+      '**/*.md', '**/*.json', '**/*.yml', '**/*.yaml', '**/*.lock', '**/*.lock.json', '**/*.lock.yaml', '**/*.lock.yml', 
+      '**/*.lock.lock', '**/*.lock.lock.json', '**/*.lock.lock.yaml', '**/*.lock.lock.yml', '**/*.lock.lock.lock'
+    ],
+  },
+  github: {
+    accessToken: getEnvVar("GITHUB_TOKEN", ""),
+  },
+  bitbucket: {
+    accessToken: getEnvVar("BITBUCKET_TOKEN", ""),
   },
 };
 
@@ -93,7 +109,7 @@ export async function prepareConfig(
   if (await fileExists(configFile)) {
     config = await readConfig(configFile);
   }
-
+  
   if(options.output) {
     config.output = options.output;
   }

@@ -1,6 +1,6 @@
 {
   "name": "crgpt",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "CLI tool that leverages ChatGPT API to perform code reviews and providing suggestions for improving code quality.",
   "keywords": [
     "crgpt",
@@ -39,6 +39,7 @@
     "@types/node-fetch": "2",
     "commander": "^10.0.0",
     "js-yaml": "^4.1.0",
+    "minimatch": "^10.0.1",
     "node-fetch": "2"
   }
 }
