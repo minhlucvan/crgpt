@@ -32,8 +32,8 @@ program
     try {
       const {
         prId,
-        source: sourceBranch = "HEAD",
-        target: targetBranch = "main",
+        source: sourceBranch = '',
+        target: targetBranch = 'main',
         config: configPath,
       } = options;
 
@@ -43,9 +43,6 @@ program
           break;
         case "review":
           const config = await prepareConfig(configPath, options);
-          if (!sourceBranch || !targetBranch) {
-            throw new Error("Please provide source and target branch names");
-          }
           await runCRGPTCLI({ sourceBranch, targetBranch, prId }, config);
           break;
         case 'preview':

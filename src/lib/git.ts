@@ -13,7 +13,7 @@ export async function generateDiffs(
     if (targetBranch === "HEAD") {
         command = `git diff ${sourceBranch} --name-only`;
     } else {
-        command = `git diff ${sourceBranch}...${targetBranch} --name-only`;
+        command = `git diff ${targetBranch}...${sourceBranch} --name-only`;
     }
     const includes = config.review.includes || [];
     const excludes = config.review.excludes || [];
@@ -48,6 +48,11 @@ export async function generateDiffs(
         diffs.push({ file, diff });
     }
     return diffs;
+}
+
+export async function getCurrentBranch(): Promise<string> {
+    const branch = await execAsync("git rev-parse --abbrev-ref HEAD");
+    return branch.trim();
 }
 
 async function generateContentDiff(
