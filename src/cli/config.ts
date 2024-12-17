@@ -23,16 +23,16 @@ Instructions:
 `;
 
 const DEFAULT_SUMMARY = `
-    ## What Changed:
+    ### What Changed:
     - Summarize the changes made in general.
     - Describe what was added, removed, or modified in a bullet list.
 
-    ## What's Wrong:
+    ### What's Wrong:
     - Identify any issues or problems in the code.
     - Point out any potential errors, bugs, or inconsistencies.
     - Highlight any potential risks or side effects.
 
-    ## Recommendations:
+    ### Recommendations:
     - Provide recommendations or suggestions for improvement, Only actionable feedback, no general comments.
     - Given clear and concise suggestions for improvement, no vague or ambiguous feedback.
     - Include any specific tasks or action items that need to be addressed.
