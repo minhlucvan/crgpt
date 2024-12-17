@@ -12,7 +12,7 @@ program
   .description("Run CRGPT on a pull request")
   .addArgument(
     new Argument("<action>", "Action to perform")
-      .choices(["init", "review", "diff", "desc"])
+      .choices(["init", "review", "preview", "diff", "desc"])
       .default("review", "Code review")
   )
   .option("-o, --output <output>", "output method")
@@ -32,8 +32,8 @@ program
     try {
       const {
         prId,
-        source: sourceBranch,
-        target: targetBranch,
+        source: sourceBranch = '',
+        target: targetBranch = 'main',
         config: configPath,
       } = options;
 
@@ -43,10 +43,12 @@ program
           break;
         case "review":
           const config = await prepareConfig(configPath, options);
-          if (!sourceBranch || !targetBranch) {
-            throw new Error("Please provide source and target branch names");
-          }
           await runCRGPTCLI({ sourceBranch, targetBranch, prId }, config);
+          break;
+        case 'preview':
+          const previewConfig = await prepareConfig(configPath, options);
+          // perform preview un-committed changes
+          await runCRGPTCLI({ sourceBranch: 'HEAD', targetBranch: 'HEAD', prId }, previewConfig);
           break;
         case "diff":
           throw new Error("Not implemented");

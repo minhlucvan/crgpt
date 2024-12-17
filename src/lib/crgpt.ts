@@ -11,7 +11,8 @@ import { postCommentToBitbucketPR } from './bitbucket';
 import { postCommentToGithubPR } from './github';
 import { writeCodeReviewToFile } from './markdown';
 import { printCodeReviewToConsole } from './stdout';
-import { generateDiffs } from './git';
+import { generateDiffs, getCurrentBranch } from './git';
+import { CrGPTCLIOptions } from '../cli/types';
 
 
 async function postDiffToEndpoint(
@@ -98,7 +99,7 @@ async function summarizeCRContent(
   const header = '# Code Review Summary:';
   const fileSummaries = results
     .map(({ file, review }) => `### ${file}\n  \n${review}`)
-    .join('\n\n');
+    .join('\n\n---\n\n');
   const content = `${header}\n\n${fileSummaries}`;
 
   return {
@@ -113,7 +114,7 @@ export async function runCRGPT(
   options: runCRGPTOptions,
   config: Config
 ): Promise<ReviewSumary> {
-  const { sourceBranch, targetBranch, prId } = options;
+  const { sourceBranch, targetBranch, prId } = await getOptions(options);
   console.log(`run CRGPT`)
   console.log(`sourceBranch: ${sourceBranch}`);
   console.log(`targetBranch: ${targetBranch}`);
@@ -127,6 +128,17 @@ export async function runCRGPT(
   const results = await processDiffs(diffData, config, prId);
   const commentContent = await summarizeCRContent(results, config);
   return commentContent;
+}
+
+async function getOptions(options: runCRGPTOptions) {
+  const parsedOptions = { ...options };
+
+  // default sourceBranch to current branch
+  if (!parsedOptions.sourceBranch) {
+    parsedOptions.sourceBranch = await getCurrentBranch()
+  }
+
+  return parsedOptions;
 }
 
 export async function runCRGPTCLI(

@@ -21,7 +21,8 @@ crgpt [action] [options]
 Where action is one of the following options:
 
 - `init`: create the `.crgpt.yml` configuration file
-- `review`: perform a code review
+- `review`: perform a code review between 2 branches or a pull request
+- `preview`: preview the local changes before creating a pull request
 
 And options are the command-line arguments:
 
@@ -103,7 +104,8 @@ review:
     - issues mentioned in the code review checklist
 
     **Mergeable:** YES, NO or NEEDS IMPROVEMENT
-  ignoreFiles: []
+  includes: []
+  excludes: []
 
 
 ```
